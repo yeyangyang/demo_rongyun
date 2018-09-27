@@ -1,0 +1,276 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>融云接口-user3</title>
+		<script src="http://cdn.ronghub.com/RongIMLib-2.2.5.min.js"></script> 
+		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	</head>
+
+
+	<body>
+	
+	
+	
+
+
+<script type="text/javascript">
+	
+$(function(){
+	
+	RongIMLib.RongIMClient.init("pkfcgjstpobn8");		//初始化 SDK
+	
+
+
+// 设置连接监听状态 （ status 标识当前连接状态 ）
+ // 连接状态监听器
+ RongIMClient.setConnectionStatusListener({
+    onChanged: function (status) {
+        switch (status) {
+            case RongIMLib.ConnectionStatus.CONNECTED:
+                console.log('链接成功');
+                break;
+            case RongIMLib.ConnectionStatus.CONNECTING:
+                console.log('正在链接');
+                break;
+            case RongIMLib.ConnectionStatus.DISCONNECTED:
+                console.log('断开连接');
+                break;
+            case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
+                console.log('其他设备登录');
+                break;
+              case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
+                console.log('域名不正确');
+                break;
+            case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
+              console.log('网络不可用');
+              break;
+            }
+    }});
+
+ // 消息监听器
+ RongIMClient.setOnReceiveMessageListener({
+    // 接收到的消息
+    onReceived: function (message) {
+    	
+    	console.log(message);
+    	console.log(message.messageType);
+    	
+        // 判断消息类型
+        switch(message.messageType){
+            case RongIMClient.MessageType.TextMessage:
+            	alert(message.content.content);
+                // message.content.content => 消息内容
+                break;
+            case RongIMClient.MessageType.VoiceMessage:
+                // 对声音进行预加载                
+                // message.content.content 格式为 AMR 格式的 base64 码
+                break;
+            case RongIMClient.MessageType.ImageMessage:
+               // message.content.content => 图片缩略图 base64。
+               // message.content.imageUri => 原图 URL。
+               break;
+            case RongIMClient.MessageType.DiscussionNotificationMessage:
+               // message.content.extension => 讨论组中的人员。
+               break;
+            case RongIMClient.MessageType.LocationMessage:
+               // message.content.latiude => 纬度。
+               // message.content.longitude => 经度。
+               // message.content.content => 位置图片 base64。
+               break;
+            case RongIMClient.MessageType.RichContentMessage:
+               // message.content.content => 文本消息内容。
+               // message.content.imageUri => 图片 base64。
+               // message.content.url => 原图 URL。
+               break;
+            case RongIMClient.MessageType.InformationNotificationMessage:
+                // do something...
+               break;
+            case RongIMClient.MessageType.ContactNotificationMessage:
+                // do something...
+               break;
+            case RongIMClient.MessageType.ProfileNotificationMessage:
+                // do something...
+               break;
+            case RongIMClient.MessageType.CommandNotificationMessage:
+                // do something...
+               break;
+            case RongIMClient.MessageType.CommandMessage:
+                // do something...
+               break;
+            case RongIMClient.MessageType.UnknownMessage:
+                // do something...
+               break;
+            default:
+                // do something...
+        }
+    }
+});
+
+
+//连接服务器
+ var token = "2Fu+8D2DjnDGYHaQb8aFKH1FMym3nlJxD6s8qEEld1gfgsV1nx6BeqTTfPH6h+77XAPAeHGgbXLuSWOwEdJLS3URdBCbqHG8";
+
+  	RongIMClient.connect(token, {
+        onSuccess: function(userId) {
+          console.log("Connect successfully." + userId);
+        },
+        onTokenIncorrect: function() {
+          console.log('token无效');
+        },
+        onError:function(errorCode){
+              var info = '';
+              switch (errorCode) {
+                case RongIMLib.ErrorCode.TIMEOUT:
+                  info = '超时';
+                  break;
+                case RongIMLib.ConnectionState.UNACCEPTABLE_PAROTOCOL_VERSION:
+                  info = '不可接受的协议版本';
+                  break;
+                case RongIMLib.ConnectionState.IDENTIFIER_REJECTED:
+                  info = 'appkey不正确';
+                  break;
+                case RongIMLib.ConnectionState.SERVER_UNAVAILABLE:
+                  info = '服务器不可用';
+                  break;
+              }
+              console.log(errorCode);
+            }
+      });
+
+
+
+
+
+
+});
+
+</script>
+<h1>消息接口</h1>
+<input type="button" name="1" id="1" value="发送消息" onclick="send_message();" />
+<input type="button" name="2" id="2" value="获取聊天记录" onclick="record_message();" />
+
+<br />
+
+<h1>会话接口</h1>
+<input type="button" name="3" id="3" value="获取会话列表" onclick="dialogue_list();" />
+<input type="button" name="4" id="4" value="删除会话" onclick="dialogue_del();" />
+<input type="button" name="5" id="5" value="删除所有会话" onclick="dialogue_del_q();" />
+
+<!-- 消息接口 -->
+<script type="text/javascript">
+/* 发送接口  */
+function send_message(content="hello",extra="附加信息",targetId="userId1"){
+		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId3!",extra:['userId3','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
+		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
+		 var targetId = "userId1"; // 目标 Id
+		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
+                onSuccess: function (message) {
+                    //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
+                    console.log("Send successfully");
+                },
+                onError: function (errorCode,message) {
+                    var info = '';
+                    switch (errorCode) {
+                        case RongIMLib.ErrorCode.TIMEOUT:
+                            info = '超时';
+                            break;
+                        case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                            info = '未知错误';
+                            break;
+                        case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                            info = '在黑名单中，无法向对方发送消息';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                            info = '不在讨论组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                            info = '不在群组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                            info = '不在聊天室中';
+                            break;
+                        default :
+                            info = x;
+                            break;
+                    }
+                    console.log('发送失败:' + info);
+                }
+            }
+        );	
+}
+
+
+
+/* 获取单群聊历史消息 */
+function record_message(){
+	var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
+	var targetId = "userId1"; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+	var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+	var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
+	RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
+	  onSuccess: function(list, hasMsg) {
+	  	console.log(list);
+	       // list => Message 数组。
+	    // hasMsg => 是否还有历史消息可以获取。
+	  },
+	  onError: function(error) {
+	    console.log("GetHistoryMessages,errorcode:" + error);
+	  }
+	});
+}
+
+
+</script>
+
+
+<!-- 会话接口 -->
+<script type="text/javascript">
+
+/* 获取会话列表 */
+function dialogue_list(){
+	let limit = 20; //获取会话的数量，不传或传null为全部，暂不支持分页
+
+	RongIMClient.getInstance().getConversationList({
+	  onSuccess: function(list) {
+	  	console.log(list);
+	    // list => 会话列表集合。
+	  },
+	  onError: function(error) {
+	  	console.log("errorcode: " + error);
+	     // do something...
+	  }
+	},null,limit);
+}
+
+
+/* 删除指定会话 */
+function dialogue_del(){
+	RongIMClient.getInstance().removeConversation(RongIMLib.ConversationType.PRIVATE, 'userId1', { 
+		onSuccess:function(result){ 
+            //showResult("删除会话成功",result,start);
+		}, 
+		onError:function(error){ 
+		// error => 清除会话错误码。 
+		    //showResult("删除会话失败",error,start);
+		} 
+	});
+}
+
+/* 删除所有会话 */
+function dialogue_del_q(){
+	RongIMClient.getInstance().clearConversations({
+	    onSuccess:function(){
+	      // 清除会话成功
+	    },
+	    onError:function(error){
+	      // error => 清除会话错误码。
+	    }
+	});
+}
+
+
+</script>
+
+
+	</body>
+</html>
