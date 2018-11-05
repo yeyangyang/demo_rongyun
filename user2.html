@@ -9,7 +9,17 @@
 
 	<body>
 	
-	
+<!-- 声明全局变量 -->	
+<script type="text/javascript">
+	var _appkey = "n19jmcy5n87k9";	//appken
+	var _token = "COVHsKvipswMkzA8pvMBDklEovFeiuwFtTxKOHTGVaz2sEIqXAo19Y0Hfzy96WFCp4IfAucrl50=";		//token
+	var _currentUid = "124";	//当前用户 Id
+	var _currentHeadimg = "https://zyshop.300c.cn/uploadfile/2018/0315/thumb_300_300_20180315025353659.jpg";		//当前用户 头像
+	var _currentName = "用户2";		//当前用户 名称
+	var _targetUid = "123";		//目标用户 Id
+</script>
+
+
 	
 
 
@@ -17,7 +27,7 @@
 	
 $(function(){
 	
-	RongIMLib.RongIMClient.init("pkfcgjstpobn8");		//初始化 SDK
+	RongIMLib.RongIMClient.init(_appkey);		//初始化 SDK
 	
 
 
@@ -108,7 +118,7 @@ $(function(){
 
 
 //连接服务器
- var token = "yYHge54/hTzJLIaqy0h9qRFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ0Ed93CTsWjIMcJMsMhpXRDasjZQEifEa2YB67Ndpp0j";
+ var token = _token;
 
   	RongIMClient.connect(token, {
         onSuccess: function(userId) {
@@ -160,9 +170,9 @@ $(function(){
 <script type="text/javascript">
 /* 发送接口  */
 function send_message(){
-		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId2!",extra:['userId2','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
+		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud! Im is User2!",extra:[_currentUid,_currentHeadimg,_currentName]});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
 		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
-		 var targetId = "userId1"; // 目标 Id
+		 var targetId = _targetUid; // 目标 Id
 		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
                 onSuccess: function (message) {
                     //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
@@ -204,7 +214,7 @@ function send_message(){
 /* 获取单群聊历史消息 */
 function record_message(){
 	var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
-	var targetId = "userId1"; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+	var targetId = _targetUid; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
 	var timestrap = 0; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
 	var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
 	RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
