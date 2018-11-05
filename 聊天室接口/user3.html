@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>融云接口-user2</title>
+		<title>融云接口-user3</title>
 		<script src="http://cdn.ronghub.com/RongIMLib-2.2.5.min.js"></script> 
 		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 	</head>
@@ -108,7 +108,7 @@ $(function(){
 
 
 //连接服务器
- var token = "yYHge54/hTzJLIaqy0h9qRFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ0Ed93CTsWjIMcJMsMhpXRDasjZQEifEa2YB67Ndpp0j";
+ var token = "2Fu+8D2DjnDGYHaQb8aFKH1FMym3nlJxD6s8qEEld1gfgsV1nx6BeqTTfPH6h+77XAPAeHGgbXLuSWOwEdJLS3URdBCbqHG8";
 
   	RongIMClient.connect(token, {
         onSuccess: function(userId) {
@@ -156,11 +156,20 @@ $(function(){
 <input type="button" name="4" id="4" value="删除会话" onclick="dialogue_del();" />
 <input type="button" name="5" id="5" value="删除所有会话" onclick="dialogue_del_q();" />
 
+<br />
+
+<h1>聊天室接口</h1>
+<input type="button" name="6" id="6" value="加入聊天室" onclick="chatroom_join();" />
+<input type="button" name="7" id="7" value="聊天室发消息" onclick="chatroom_sendMsg();" />
+<input type="button" name="8" id="8" value="聊天室发题目" onclick="chatroom_sendTitle();" />
+<input type="button" name="9" id="9" value="退出聊天室" onclick="chatroom_quit();" />
+<input type="button" name="10" id="10" value="获取聊天室信息" onclick="chatroom_list();" />
+
 <!-- 消息接口 -->
 <script type="text/javascript">
 /* 发送接口  */
-function send_message(){
-		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId2!",extra:['userId2','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
+function send_message(content="hello",extra="附加信息",targetId="userId1"){
+		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId3!",extra:['userId3','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
 		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
 		 var targetId = "userId1"; // 目标 Id
 		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
@@ -205,7 +214,7 @@ function send_message(){
 function record_message(){
 	var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
 	var targetId = "userId1"; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
-	var timestrap = 0; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+	var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
 	var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
 	RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
 	  onSuccess: function(list, hasMsg) {
@@ -228,7 +237,7 @@ function record_message(){
 
 /* 获取会话列表 */
 function dialogue_list(){
-	var limit = 20; //获取会话的数量，不传或传null为全部，暂不支持分页
+	let limit = 20; //获取会话的数量，不传或传null为全部，暂不支持分页
 
 	RongIMClient.getInstance().getConversationList({
 	  onSuccess: function(list) {
@@ -268,6 +277,27 @@ function dialogue_del_q(){
 	});
 }
 
+
+</script>
+
+<!-- 聊天室接口 -->
+<script type="text/javascript">
+
+/* 加入聊天室 */
+function chatroom_join(){
+	var chatRoomId = "10086"; // 聊天室 Id。
+	var count = 20;// 拉取最近聊天最多 50 条。
+	RongIMClient.getInstance().joinChatRoom(chatRoomId, count, {
+	  onSuccess: function() {
+	       // 加入聊天室成功。
+	       console.log('加入聊天室成功');
+	  },
+	  onError: function(error) {
+	  	console.log('加入聊天室失败');
+	    // 加入聊天室失败
+	  }
+	});
+}
 
 </script>
 

@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>融云接口-user2</title>
+		<title>融云接口-user4</title>
 		<script src="http://cdn.ronghub.com/RongIMLib-2.2.5.min.js"></script> 
 		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 	</head>
@@ -108,7 +108,7 @@ $(function(){
 
 
 //连接服务器
- var token = "yYHge54/hTzJLIaqy0h9qRFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ0Ed93CTsWjIMcJMsMhpXRDasjZQEifEa2YB67Ndpp0j";
+ var token = "g964Te71E9lIIdZqLlh0iBFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ3d5xwqJXCheuqTbr6P5/n/TZC9EjhWcfmYB67Ndpp0j";
 
   	RongIMClient.connect(token, {
         onSuccess: function(userId) {
@@ -159,8 +159,8 @@ $(function(){
 <!-- 消息接口 -->
 <script type="text/javascript">
 /* 发送接口  */
-function send_message(){
-		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId2!",extra:['userId2','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
+function send_message(content="hello",extra="附加信息",targetId="userId1"){
+		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud userId4!",extra:['userId','这个是头像路径','这个是昵称']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
 		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
 		 var targetId = "userId1"; // 目标 Id
 		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
@@ -205,7 +205,7 @@ function send_message(){
 function record_message(){
 	var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
 	var targetId = "userId1"; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
-	var timestrap = 0; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+	var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
 	var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
 	RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
 	  onSuccess: function(list, hasMsg) {
@@ -228,7 +228,7 @@ function record_message(){
 
 /* 获取会话列表 */
 function dialogue_list(){
-	var limit = 20; //获取会话的数量，不传或传null为全部，暂不支持分页
+	let limit = 20; //获取会话的数量，不传或传null为全部，暂不支持分页
 
 	RongIMClient.getInstance().getConversationList({
 	  onSuccess: function(list) {

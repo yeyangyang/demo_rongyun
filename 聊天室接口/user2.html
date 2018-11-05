@@ -10,7 +10,17 @@
 	<body>
 	
 	
-	
+<!-- 声明全局变量 -->	
+<script type="text/javascript">
+	var _appkey = "pkfcgjstpobn8";	//appken
+	var _token = "yYHge54/hTzJLIaqy0h9qRFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ0Ed93CTsWjIMcJMsMhpXRDasjZQEifEa2YB67Ndpp0j";		//token
+	var _currentUid = "userId2";	//当前用户 Id
+	var _currentHeadimg = "https://ss0.baidu.com/73t1bjeh1BF3odCf/it/u=842091539,4077181701&fm=85&s=5811E2112C4163453C10FBDE0300C025";		//当前用户 头像
+	var _currentName = "用户2";		//当前用户 名称
+	var _targetUid = "userId1";		//目标用户 Id
+</script>
+
+
 
 
 <script type="text/javascript">
@@ -108,7 +118,7 @@ $(function(){
 
 
 //连接服务器
- var token = "yYHge54/hTzJLIaqy0h9qRFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ0Ed93CTsWjIMcJMsMhpXRDasjZQEifEa2YB67Ndpp0j";
+ var token = _token;
 
   	RongIMClient.connect(token, {
         onSuccess: function(userId) {
@@ -155,6 +165,15 @@ $(function(){
 <input type="button" name="3" id="3" value="获取会话列表" onclick="dialogue_list();" />
 <input type="button" name="4" id="4" value="删除会话" onclick="dialogue_del();" />
 <input type="button" name="5" id="5" value="删除所有会话" onclick="dialogue_del_q();" />
+
+<br />
+
+<h1>聊天室接口</h1>
+<input type="button" name="6" id="6" value="加入聊天室" onclick="chatroom_join();" />
+<input type="button" name="7" id="7" value="聊天室发消息" onclick="chatroom_sendMsg();" />
+<input type="button" name="8" id="8" value="聊天室发题目" onclick="chatroom_sendTitle();" />
+<input type="button" name="9" id="9" value="退出聊天室" onclick="chatroom_quit();" />
+<input type="button" name="10" id="10" value="获取聊天室信息" onclick="chatroom_list();" />
 
 <!-- 消息接口 -->
 <script type="text/javascript">
@@ -270,6 +289,88 @@ function dialogue_del_q(){
 
 
 </script>
+
+
+<!-- 聊天室接口 -->
+<script type="text/javascript">
+
+/* 加入聊天室 */
+function chatroom_join(){
+	var chatRoomId = "10086"; // 聊天室 Id。
+	var count = 20;// 拉取最近聊天最多 50 条。
+	RongIMClient.getInstance().joinChatRoom(chatRoomId, count, {
+	  onSuccess: function(message) {
+	       // 加入聊天室成功。
+	       console.log('加入聊天室成功');
+	  },
+	  onError: function(error) {
+	  	console.log('加入聊天室失败');
+	    // 加入聊天室失败
+	  }
+	});
+}
+
+/* 退出聊天室 */
+function chatroom_quit(){
+	var chatRoomId = "10086"; // 聊天室 Id。
+	RongIMClient.getInstance().quitChatRoom(chatRoomId, {
+	  onSuccess: function() {
+	       // 退出聊天室成功。
+	       console.log('退出聊天室成功');
+	  },
+	  onError: function(error) {
+	    // 退出聊天室失败。
+	    console.log('退出聊天室失败');
+	  }
+	});
+}
+
+/* 聊天室发消息 */
+function chatroom_sendMsg(){
+	var content = {
+		content:"hello，time：" + new Date().getTime(),
+		extra:[_currentUid,_currentHeadimg,_currentName]
+	};
+
+	var chatRoomId = "10086";// 聊天室 Id。
+	var conversationType = RongIMLib.ConversationType.CHATROOM; // 私聊
+	var msg = new RongIMLib.TextMessage(content);
+	
+	RongIMClient.getInstance().sendMessage(conversationType, chatRoomId, msg, {
+        onSuccess: function (message) {
+        	console.log("发送聊天室消息成功");
+        	console.log(message);
+        },
+        onError: function (errorCode,message) {
+        	console.log("发送聊天室消息失败");
+        	console.log(message);
+        }
+    });
+}
+
+/* 获取聊天室用戶信息 */
+function chatroom_list(){
+	var chatRoomId = "10086";// 聊天室 Id。
+	var count = 20; // 获取聊天室人数 （范围 0-20 ）
+	var order = RongIMLib.GetChatRoomType.REVERSE;// 排序方式。
+	RongIMClient.getInstance().getChatRoomInfo(chatRoomId, count, order, {
+	  onSuccess: function(chatRoom) {
+	  	console.log("获取聊天室信息成功");
+	  	console.log(chatRoom);
+	       // chatRoom => 聊天室信息。
+	    // chatRoom.userInfos => 返回聊天室成员。
+	     // chatRoom.userTotalNums => 当前聊天室总人数。
+	  },
+	  onError: function(error) {
+	  	console.log("获取聊天室信息失败");
+	    // 获取聊天室信息失败。
+	  }
+	});	
+}
+
+</script>
+
+
 
 
 	</body>

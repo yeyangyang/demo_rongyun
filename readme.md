@@ -9,7 +9,7 @@
 - [x] 1.服务端先注册用户，然后加入一个token，这样就现成了一个token对应一个用户的概念；
 - [x] 2.客户端初始化融云，这样我们的客户端就能实时的接收到其他用户所发过来的消息了；
 - [x] 3.客户端进行消息发送（也可以用服务端，占时先用客户端的进行发送消息）；
-- [x] 4.客户端使用 `消息监听` 来实时接受消息
+- [x] 4.客户端使用 `消息监听` 来实时接受消息**（文本消息、图文消息、位置消息）**
 - [x] 5.客户端接下来是做会话列表（这样展示出来我所聊过的所有用户，到时候好进行相对应的用户操作）；使用`获取会话列表`，这样子就能获取我所聊过的所有用户（他这个所有列表还可以获得用户聊天的最后一条记录，**就是不知道能不能判断他是否读取过当前这条数据了**）；
 - [x] 6.客户端的会话功能，既然能获取他的列表，那么就代表肯定能删除他的列表数据了；
 - [x] 7.最后只要每次进入和这个用户的聊天框时，既可以查看上次的聊天记录（获取单群聊历史消息）；
@@ -25,6 +25,8 @@
   [客户端源码下载地址](https://github.com/rongcloud/websdk-demo/tree/master/im)
   [客户端WebSDK demo](https://github.com/rongcloud/websdk-demo)
   [客户端WebIM 集成引导](https://rongcloud.github.io/websdk-demo/integrate/guide.html)
+  [消息接口-融云 SDK 消息结构详解](https://www.rongcloud.cn/docs/message_architecture.html#text_message)
+
  2. 服务端
   [服务端文档](https://www.rongcloud.cn/docs/server.html#open_source_sdk)
   [服务端-PHP源码下载地址](https://github.com/rongcloud/server-sdk-php)
@@ -36,7 +38,11 @@
 ## 客户端
 
 ### 消息接口
-- [x] 发送接口
+- [x] 发送接口（文本消息）
+- [x] 发送接口（图片消息）
+- [x] 发送接口（位置消息）
+- [ ] 发送接口（显示正在输入状态消息）（NO）
+- [ ] 发送接口（已读通知消息）（NO）
 - [x] 获取单群聊历史消息
 
 ### 会话接口
@@ -52,7 +58,9 @@
 
 # 日程
 
- - 20180913 今天把基本的融云知识了解了一下，其中就是初步的会使用了他的聊天（发消息、获取消息列表、获取聊天记录、删除会话等操作），这些基础的操作，现在做的也只是按照文档上面来一步一步操作下来的，里面的含义还没有理解进入
+ - 20180927 今天把基本的融云知识了解了一下，其中就是初步的会使用了他的聊天（发消息、获取消息列表、获取聊天记录、删除会话等操作），这些基础的操作，现在做的也只是按照文档上面来一步一步操作下来的，里面的含义还没有理解进入
+
+ - 20180929 我一大早过来就研究了`消息接口`中的`图片消息`，很简单的，dome代码复制过来，在把指定的值传入进去，就可以了。。然后中午做了`位置消息`，其实这个几个接口都一样，调用官方代码，可以直接用了的。我还看了`正在输入状态消息`、
 
 ---
 
@@ -219,11 +227,16 @@
 
 ### 消息接口
 
-* **发送消息**
+* **消息接口参数说明**
+[融云 SDK 消息结构详解](https://www.rongcloud.cn/docs/message_architecture.html#text_message)
+
+
+* **发送消息-文本消息**
 使用`客户端`的代码进行发送消息
 
 ```js
 /* 发送接口  */
+//那extra这个做聊天记录，这样就知道这条记录是谁发的了，参考格式  extra:['userId2','这个是头像路径','这个是昵称']
 function send_message(content="hello",extra="附加信息",targetId="userId2"){
 		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud!",extra:['这个是用户id','这个是头像路径','这个是昵称']});
 		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
@@ -266,7 +279,129 @@ function send_message(content="hello",extra="附加信息",targetId="userId2"){
 
 ```
 
-* **消息接受**
+* **发送消息-图片消息**
+使用`客户端`的代码进行发送消息
+
+```js
+/* 发送消息_图片消息 */
+function send_ImgMessage(){
+
+
+ /*
+     图片转为可以使用 HTML5 的 FileReader 或者 canvas 也可以上传到后台进行转换。
+
+     注意事项：
+         1、缩略图必须是 base64 码的 jpg 图。
+         2、不带前缀。
+         3、大小建议不超过 100 K。
+   */
+ var base64Str = "base64 格式缩略图";
+ var imageUri = "图片 URL"; //上传到自己服务器的 URL。
+ var extra = "附加信息";    //那extra这个做聊天记录，这样就知道这条记录是谁发的了，参考格式  extra:['userId2','这个是头像路径','这个是昵称']
+
+ var msg = new RongIMLib.ImageMessage({content:base64Str,imageUri:imageUri,extra:extra});
+ var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
+ var targetId = "xxx"; // 目标 Id
+ RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
+                onSuccess: function (message) {
+                    //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
+                    console.log("Send successfully");
+                },
+                onError: function (errorCode,message) {
+                    var info = '';
+                    switch (errorCode) {
+                        case RongIMLib.ErrorCode.TIMEOUT:
+                            info = '超时';
+                            break;
+                        case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                            info = '未知错误';
+                            break;
+                        case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                            info = '在黑名单中，无法向对方发送消息';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                            info = '不在讨论组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                            info = '不在群组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                            info = '不在聊天室中';
+                            break;
+                        default :
+                            info = x;
+                            break;
+                    }
+                    console.log('发送失败:' + info);
+                }
+            }
+        );
+
+}
+
+```
+
+
+* **发送消息-位置消息**
+使用`客户端`的代码进行发送消息
+
+```js
+
+/* 发送消息_位置消息 */
+function send_LocationMessage(){
+
+ var latitude = "28.6730700000";	//纬度
+ var longitude = "121.4429700000";	//经度
+ var poi = "浙江省台州市椒江区海门街道幸福村西北方向";		//位置描述
+ var content = "位置缩略图";			//位置缩略图，和图片消息的图片是一样的，采用base64格式的图片
+ var extra = [_currentUid,_currentHeadimg,_currentName];		//当前用户id，当前用户头像，当前用户名称
+ 
+ var msg = new RongIMLib.LocationMessage({latitude: latitude, longitude: longitude, poi: poi, content: content, extra: extra});
+ var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
+ var targetId = _targetUid; // 目标 Id
+ 
+		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
+                onSuccess: function (message) {
+                    //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
+                    console.log("Send successfully");
+                },
+                onError: function (errorCode,message) {
+                    var info = '';
+                    switch (errorCode) {
+                        case RongIMLib.ErrorCode.TIMEOUT:
+                            info = '超时';
+                            break;
+                        case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                            info = '未知错误';
+                            break;
+                        case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                            info = '在黑名单中，无法向对方发送消息';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                            info = '不在讨论组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                            info = '不在群组中';
+                            break;
+                        case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                            info = '不在聊天室中';
+                            break;
+                        default :
+                            info = x;
+                            break;
+                    }
+                    console.log('发送失败:' + info);
+                }
+            }
+        );
+	
+}
+
+```
+
+
+
+* **消息接收**
 
 一般在上面几步就已经写好了这个方法,用`消息监听器`来监控是否有新的消息
 ```js
