@@ -358,7 +358,7 @@ function dialogue_list(){
 
 /* 删除指定会话 */
 function dialogue_del(){
-	RongIMClient.getInstance().removeConversation(RongIMLib.ConversationType.PRIVATE, 'userId2', { 
+	RongIMClient.getInstance().removeConversation(RongIMLib.ConversationType.PRIVATE, _targetUid, { 
 		onSuccess:function(result){ 
             //showResult("删除会话成功",result,start);
 		}, 

@@ -7,7 +7,7 @@
  * v2.0.1
  */
 include 'rongcloud.php';
-$appKey = 'pkfcgjstpobn8';
+$appKey = '';
 $appSecret = '';
 $jsonPath = "jsonsource/";
 $RongCloud = new RongCloud($appKey,$appSecret);

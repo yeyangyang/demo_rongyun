@@ -11,12 +11,12 @@
 	
 <!-- 声明全局变量 -->	
 <script type="text/javascript">
-	var _appkey = "pkfcgjstpobn8";	//appken
-	var _token = "yg3dGU8CanlFJBfjFMkROBFMWRjgFpHNpunbm3dzwg7u0C5WddLeJ/8TV0XIde09yan3an9LERonjCMGsHVhomYB67Ndpp0j";		//token
-	var _currentUid = "userId1";	//当前用户 Id
-	var _currentHeadimg = "https://ss0.baidu.com/73t1bjeh1BF3odCf/it/u=842091539,4077181701&fm=85&s=5811E2112C4163453C10FBDE0300C025";		//当前用户 头像
+	var _appkey = "n19jmcy5n87k9";	//appken
+	var _token = "CfOgIvpNnm3TQAkv4ag1b34kUYURk857nKXY9b2SjmR14ejlGFiXfeWMCEQRvNN50njxdb8X7O1NvDINxA8ocQ==";		//token
+	var _currentUid = "123";	//当前用户 Id
+	var _currentHeadimg = "https://zyshop.300c.cn/uploadfile/2018/0315/thumb_300_300_20180315030232536.jpg";		//当前用户 头像
 	var _currentName = "用户1";		//当前用户 名称
-	var _targetUid = "userId2";		//目标用户 Id
+	var _targetUid = "124";		//目标用户 Id
 </script>
 
 
@@ -24,7 +24,7 @@
 	
 $(function(){
 	
-	RongIMLib.RongIMClient.init("pkfcgjstpobn8");		//初始化 SDK
+	RongIMLib.RongIMClient.init(_appkey);		//初始化 SDK
 
 // 设置连接监听状态 （ status 标识当前连接状态 ）
  // 连接状态监听器
@@ -273,9 +273,9 @@ function send_ImgMessage(){
 	
 /* 发送接口_文本消息  */
 function send_message(){
-		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud!",extra:['userId1','http://img4.duitang.com/uploads/item/201411/09/20141109142633_ncKBY.thumb.700_0.jpeg','昵称2']});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
+		 var msg = new RongIMLib.TextMessage({content:"hello RongCloud! Im is User1",extra:[_currentUid,_currentHeadimg,_currentName]});	//那extra这个做聊天记录，这样就知道这条记录是谁发的了
 		 var conversationtype = RongIMLib.ConversationType.PRIVATE; // 单聊,其他会话选择相应的消息类型即可。
-		 var targetId = "userId2"; // 目标 Id
+		 var targetId = _targetUid; // 目标 Id
 		 RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
                 onSuccess: function (message) {
                     //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
@@ -317,7 +317,7 @@ function send_message(){
 /* 获取单群聊历史消息 */
 function record_message(){
 	var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
-	var targetId = "userId2"; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+	var targetId = _targetUid; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
 	var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
 	var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
 	RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
@@ -358,7 +358,7 @@ function dialogue_list(){
 
 /* 删除指定会话 */
 function dialogue_del(){
-	RongIMClient.getInstance().removeConversation(RongIMLib.ConversationType.PRIVATE, 'userId2', { 
+	RongIMClient.getInstance().removeConversation(RongIMLib.ConversationType.PRIVATE, _targetUid, { 
 		onSuccess:function(result){ 
             //showResult("删除会话成功",result,start);
 		}, 
